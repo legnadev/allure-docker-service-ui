@@ -21,11 +21,7 @@ jobs:
     - name: Determine Dockerfile to use
       id: select_dockerfile
       run: |
-        if [ "${GITHUB_REF##*/}" = "main" ]; then
-          echo "::set-output name=dockerfile::Dockerfile"
-        elif [ "${GITHUB_REF##*/}" = "dev" ]; then
-          echo "::set-output name=dockerfile::Dockerfile-dev"
-        fi
+        echo "::set-output name=dockerfile::Dockerfile"
 
     - name: Build the Docker image
       run: docker build -t allureui:latest -f ./docker/${{ steps.select_dockerfile.outputs.dockerfile }} .
