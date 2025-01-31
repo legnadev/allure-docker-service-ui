@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: Allure Docker Service UI Workflow
 
 on:
   push:
