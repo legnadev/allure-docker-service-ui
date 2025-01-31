@@ -53,6 +53,39 @@ const styles = (theme) => ({
     zIndex: theme.zIndex.drawer + 1,
     color: "#fff",
   },
+  buttonGroup: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: theme.spacing(1),
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
+  },
+  actionButton: {
+    borderRadius: '8px',
+    textTransform: 'none',
+    padding: theme.spacing(1, 2),
+    fontSize: '0.875rem',
+    minWidth: 'auto',
+  },
+  dangerButton: {
+    backgroundColor: '#dc2626',
+    color: 'white',
+    '&:hover': {
+      backgroundColor: '#b91c1c',
+    },
+  },
+  primaryButton: {
+    backgroundColor: theme.palette.primary.main,
+    color: 'white',
+    '&:hover': {
+      backgroundColor: theme.palette.primary.dark,
+    },
+  },
+  iconButton: {
+    borderRadius: '8px',
+    padding: theme.spacing(1),
+    marginLeft: theme.spacing(1),
+  },
 });
 
 class AllureDockerProject extends Component {
@@ -344,7 +377,7 @@ class AllureDockerProject extends Component {
       buttons.push(
         <Button
           variant="contained"
-          color="secondary"
+          className={`${classes.actionButton} ${classes.dangerButton}`}
           onClick={this.openDeleteProjectDialog}
           key="delete"
           disabled={!isAdmin()}
@@ -359,77 +392,45 @@ class AllureDockerProject extends Component {
       reportSelectedValue === "latest" ||
       reports.length === 0
     ) {
-      buttons.push(
+      const adminButtons = [
+        { key: 'send-results', label: 'Send Results', onClick: this.openSendResultsDialog },
+        { key: 'generate-report', label: 'Generate Report', onClick: this.openGenerateReportDialog },
+        { key: 'clean-results', label: 'Clean Results', onClick: this.openCleanResultsDialog },
+        { key: 'clean-history', label: 'Clean History', onClick: this.openCleanHistoryDialog },
+      ].map(btn => (
         <Button
-          key="send-results"
-          onClick={this.openSendResultsDialog}
+          key={btn.key}
+          variant="contained"
+          className={`${classes.actionButton} ${classes.primaryButton}`}
+          onClick={btn.onClick}
           disabled={!isAdmin()}
         >
-          Send Results
+          {btn.label}
         </Button>
-      );
-      buttons.push(
+      ));
+
+      const exportButtons = [
+        { key: 'get-emailable-report', label: 'Get Emailable Report', onClick: () => this.goToEmailableReport(projectId) },
+        { key: 'export-emailable-report', label: 'Export Emailable Report', onClick: () => this.exportEmailableReport(projectId) },
+        { key: 'export-full-report', label: 'Export Full Report', onClick: () => this.exportFullReport(projectId) },
+      ].map(btn => (
         <Button
-          key="generate-report"
-          onClick={this.openGenerateReportDialog}
-          disabled={!isAdmin()}
+          key={btn.key}
+          variant="contained"
+          className={`${classes.actionButton} ${classes.primaryButton}`}
+          onClick={btn.onClick}
         >
-          Generate Report
+          {btn.label}
         </Button>
-      );
-      buttons.push(
-        <Button
-          key="clean-results"
-          onClick={this.openCleanResultsDialog}
-          disabled={!isAdmin()}
-        >
-          Clean Results
-        </Button>
-      );
-      buttons.push(
-        <Button
-          key="clean-history"
-          onClick={this.openCleanHistoryDialog}
-          disabled={!isAdmin()}
-        >
-          Clean History
-        </Button>
-      );
-      buttons.push(
-        <Button
-          key="get-emailable-report"
-          onClick={() => this.goToEmailableReport(projectId)}
-        >
-          Get Emailable Report
-        </Button>
-      );
-      buttons.push(
-        <Button
-          key="export-emailable-report"
-          onClick={() => this.exportEmailableReport(projectId)}
-        >
-          Export Emailable Report
-        </Button>
-      );
-      buttons.push(
-        <Button
-          key="export-full-report"
-          onClick={() => this.exportFullReport(projectId)}
-        >
-          Export Full Report
-        </Button>
-      );
+      ));
+
+      buttons.push(...adminButtons, ...exportButtons);
     }
 
     const buttonsGroup = (
-      <ButtonGroup
-        size="large"
-        color="primary"
-        variant="contained"
-        aria-label="outlined primary button group"
-      >
+      <div className={classes.buttonGroup}>
         {buttons}
-      </ButtonGroup>
+      </div>
     );
 
     return (
@@ -447,7 +448,11 @@ class AllureDockerProject extends Component {
                   reportSelected={reportSelectedValue}
                   reports={reports}
                 />
-                <Button key="refresh" onClick={this.refreshProject}>
+                <Button 
+                  key="refresh" 
+                  onClick={this.refreshProject}
+                  className={classes.iconButton}
+                >
                   <Refresh />
                 </Button>
 

@@ -166,8 +166,9 @@ class AllureDockerToolbar extends Component {
   };
 
   handleSearch = (event, id) => {
+    const searchTerm = id || "";
     axios
-      .get(`/projects/search?id=${id}`)
+      .get(`/projects/search?id=${searchTerm}`)
       .then((response) => {
         const projects = response.data.data.projects;
         const searchResults = [];
@@ -184,6 +185,10 @@ class AllureDockerToolbar extends Component {
         this.setState({ searchResults: [] });
       });
   };
+
+  componentDidMount() {
+    this.handleSearch(null, "");
+  }
 
   handleSearchValue = (event, value) => {
     if (value) {
@@ -241,6 +246,7 @@ class AllureDockerToolbar extends Component {
             onInputChange={this.handleSearch}
             onChange={this.handleSearchValue}
             noOptionsText={'project not found'}
+            freeSolo
             renderInput={(params) => (
               <TextField
                 {...params}
@@ -248,6 +254,7 @@ class AllureDockerToolbar extends Component {
                 margin="none"
                 variant="standard"
                 InputProps={{ ...params.InputProps, disableUnderline: true }}
+                onFocus={() => this.handleSearch(null, "")}
               />
             )}
           />
