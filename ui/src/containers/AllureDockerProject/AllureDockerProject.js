@@ -372,31 +372,15 @@ class AllureDockerProject extends Component {
       );
     }
 
-    let buttons = [];
-    if (!this.state.projectNotFound) {
-      buttons.push(
-        <Button
-          variant="contained"
-          className={`${classes.actionButton} ${classes.dangerButton}`}
-          onClick={this.openDeleteProjectDialog}
-          key="delete"
-          disabled={!isAdmin()}
-        >
-          Delete Project
-        </Button>
-      );
-    }
-
     if (
       !reportSelectedValue ||
       reportSelectedValue === "latest" ||
       reports.length === 0
     ) {
-      const adminButtons = [
+      const mainAdminButtons = [
         { key: 'send-results', label: 'Send Results', onClick: this.openSendResultsDialog },
         { key: 'generate-report', label: 'Generate Report', onClick: this.openGenerateReportDialog },
         { key: 'clean-results', label: 'Clean Results', onClick: this.openCleanResultsDialog },
-        { key: 'clean-history', label: 'Clean History', onClick: this.openCleanHistoryDialog },
       ].map(btn => (
         <Button
           key={btn.key}
@@ -424,7 +408,30 @@ class AllureDockerProject extends Component {
         </Button>
       ));
 
-      buttons.push(...adminButtons, ...exportButtons);
+      let buttons = [...mainAdminButtons, ...exportButtons];
+      
+      if (!this.state.projectNotFound) {
+        buttons.push(
+          <Button
+            key="clean-history"
+            variant="contained"
+            className={`${classes.actionButton} ${classes.dangerButton}`}
+            onClick={this.openCleanHistoryDialog}
+            disabled={!isAdmin()}
+          >
+            Clean History
+          </Button>,
+          <Button
+            variant="contained"
+            className={`${classes.actionButton} ${classes.dangerButton}`}
+            onClick={this.openDeleteProjectDialog}
+            key="delete"
+            disabled={!isAdmin()}
+          >
+            Delete Project
+          </Button>
+        );
+      }
     }
 
     const buttonsGroup = (
