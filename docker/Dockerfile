@@ -20,7 +20,7 @@ LABEL org.label-schema.build-date=${BUILD_DATE} \
     org.label-schema.vcs-ref=${VCS_REF} \
     org.label-schema.vcs-type="Git" \
     org.label-schema.vcs-url="https://github.com/fescobar/allure-docker-service-ui" \
-    authors="Frank Escobar <fescobar.systems@gmail.com>"
+    authors="Frank Escobar <fescobar.systems@gmail.com>, Angel M. Gimenez <legnadev@gmail.com>"
 
 RUN apt-get update && \
     apt install curl -y
