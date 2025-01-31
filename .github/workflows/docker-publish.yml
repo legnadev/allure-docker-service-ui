@@ -20,22 +20,23 @@ jobs:
     - name: Determine Dockerfile to use
       id: select_dockerfile
       run: |
-        echo "::set-output name=dockerfile::Dockerfile"
+        echo "dockerfile=Dockerfile" >> $GITHUB_OUTPUT
 
-    - name: Build the Docker image
-      run: docker build -t allureui:latest -f ./docker/${{ steps.select_dockerfile.outputs.dockerfile }} .
+    - name: Log in to GitHub Container Registry
+      uses: docker/login-action@v2
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GIT_TOKEN }}
 
-    - name: Log into GitHub Packages Docker Registry
-      run: docker login docker.pkg.github.com -u legnadev --password "${{ secrets.GIT_TOKEN }}"
-
-    - name: Tag and Push image based on branch
+    - name: Build and push Docker image
       run: |
         if [ "${{ github.ref }}" = "refs/heads/dev" ]; then
-          docker tag allureui:latest docker.pkg.github.com/${{ github.repository }}/allureui:dev
-          docker push docker.pkg.github.com/${{ github.repository }}/allureui:dev
+          docker build -t ghcr.io/${{ github.repository_owner }}/allureui:dev -f ./docker/${{ steps.select_dockerfile.outputs.dockerfile }} .
+          docker push ghcr.io/${{ github.repository_owner }}/allureui:dev
         elif [ "${{ github.ref }}" = "refs/heads/master" ]; then
-          docker tag allureui:latest docker.pkg.github.com/${{ github.repository }}/allureui:main
-          docker push docker.pkg.github.com/${{ github.repository }}/allureui:main
+          docker build -t ghcr.io/${{ github.repository_owner }}/allureui:main -f ./docker/${{ steps.select_dockerfile.outputs.dockerfile }} .
+          docker push ghcr.io/${{ github.repository_owner }}/allureui:main
         fi
 
     - name: Remove the local image
