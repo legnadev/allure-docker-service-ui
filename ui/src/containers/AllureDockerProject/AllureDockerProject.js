@@ -372,12 +372,28 @@ class AllureDockerProject extends Component {
       );
     }
 
+    let buttons = [];
+    if (!this.state.projectNotFound) {
+      buttons.push(
+        <Button
+          variant="contained"
+          className={`${classes.actionButton} ${classes.dangerButton}`}
+          onClick={this.openDeleteProjectDialog}
+          key="delete"
+          disabled={!isAdmin()}
+        >
+          Delete Project
+        </Button>
+      );
+    }
+
     if (
       !reportSelectedValue ||
       reportSelectedValue === "latest" ||
       reports.length === 0
     ) {
-      const mainAdminButtons = [
+      const adminButtons = [
+        { key: 'clean-history', label: 'Clean History', onClick: this.openCleanHistoryDialog, isDanger: true },
         { key: 'send-results', label: 'Send Results', onClick: this.openSendResultsDialog },
         { key: 'generate-report', label: 'Generate Report', onClick: this.openGenerateReportDialog },
         { key: 'clean-results', label: 'Clean Results', onClick: this.openCleanResultsDialog },
@@ -385,7 +401,7 @@ class AllureDockerProject extends Component {
         <Button
           key={btn.key}
           variant="contained"
-          className={`${classes.actionButton} ${classes.primaryButton}`}
+          className={`${classes.actionButton} ${btn.isDanger ? classes.dangerButton : classes.primaryButton}`}
           onClick={btn.onClick}
           disabled={!isAdmin()}
         >
@@ -408,30 +424,7 @@ class AllureDockerProject extends Component {
         </Button>
       ));
 
-      let buttons = [...mainAdminButtons, ...exportButtons];
-      
-      if (!this.state.projectNotFound) {
-        buttons.push(
-          <Button
-            key="clean-history"
-            variant="contained"
-            className={`${classes.actionButton} ${classes.dangerButton}`}
-            onClick={this.openCleanHistoryDialog}
-            disabled={!isAdmin()}
-          >
-            Clean History
-          </Button>,
-          <Button
-            variant="contained"
-            className={`${classes.actionButton} ${classes.dangerButton}`}
-            onClick={this.openDeleteProjectDialog}
-            key="delete"
-            disabled={!isAdmin()}
-          >
-            Delete Project
-          </Button>
-        );
-      }
+      buttons.push(...adminButtons, ...exportButtons);
     }
 
     const buttonsGroup = (
